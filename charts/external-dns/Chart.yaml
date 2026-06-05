@@ -1,0 +1,9 @@
+apiVersion: v2
+name: external-dns
+version: 0.1.0
+type: application
+description: ExternalDNS with Cloudflare token loaded from centralized Vault.
+dependencies:
+- name: external-dns
+  version: 1.21.1
+  repository: https://kubernetes-sigs.github.io/external-dns/

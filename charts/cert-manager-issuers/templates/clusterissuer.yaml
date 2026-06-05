@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .Values.issuer.name }}
+spec:
+  acme:
+    server: {{ .Values.issuer.server }}
+    email: {{ .Values.issuer.email | quote }}
+    privateKeySecretRef:
+      name: {{ .Values.issuer.privateKeySecretName }}
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: {{ .Values.issuer.cloudflareSecretName }}
+              key: {{ .Values.issuer.cloudflareSecretKey }}

@@ -1,0 +1,5 @@
+apiVersion: v2
+name: cloudflared
+version: 0.1.0
+type: application
+description: Reusable Cloudflare Tunnel chart for K3s GitOps clusters.

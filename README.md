@@ -9,6 +9,15 @@ own names and release contracts under `charts/`.
 ## Charts
 
 - `common-apps`: reusable application chart for small GitOps-managed workloads.
+- `cloudflared`: Cloudflare Tunnel deployment and ArgoCD ingress wiring.
+- `vault-store`: External Secrets `ClusterSecretStore` for the centralized
+  utility-cluster Vault.
+- `cert-manager`: pinned cert-manager dependency wrapper.
+- `cert-manager-issuers`: shared Let's Encrypt issuer and Cloudflare DNS token
+  ExternalSecret.
+- `external-secrets`: pinned external-secrets dependency wrapper.
+- `external-dns`: ExternalDNS plus Cloudflare token ExternalSecret.
+- `nfs-provisioner`: pinned NFS subdir provisioner wrapper.
 
 ## Release Model
 
@@ -21,6 +30,7 @@ own names and release contracts under `charts/`.
 ## Tag Contract
 
 - `common-apps-vX.Y.Z` publishes chart `common-apps` version `X.Y.Z`.
+- `<chart-name>-vX.Y.Z` publishes chart `<chart-name>` version `X.Y.Z`.
 - Docker images should use immutable tags for deployed revisions.
 
 ## Required Secrets

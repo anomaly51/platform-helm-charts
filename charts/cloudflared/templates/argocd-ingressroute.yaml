@@ -1,0 +1,21 @@
+{{- if .Values.argocd.enabled }}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: argocd-api
+  namespace: argocd
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`{{ .Values.argocd.hostname }}`)
+      priority: 1000
+      services:
+        - name: argocd-server
+          port: 443
+          scheme: https
+          serversTransport: argocd-api
+  tls:
+    secretName: {{ .Values.argocd.tlsSecretName }}
+{{- end }}

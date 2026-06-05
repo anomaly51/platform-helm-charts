@@ -1,0 +1,34 @@
+namespace:
+  create: true
+  name: external-dns
+
+cloudflareToken:
+  externalSecret:
+    name: cloudflare-api-token
+    refreshInterval: 5m
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: cloudflare-api-token
+      creationPolicy: Owner
+    remoteRef:
+      key: shared/cloudflare-dns
+      property: api-token
+
+external-dns:
+  provider:
+    name: cloudflare
+  env:
+  - name: CF_API_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: cloudflare-api-token
+        key: api-token
+  extraArgs:
+  - --cloudflare-proxied
+  domainFilters:
+  - api-api-api.com
+  sources:
+  - ingress
+  policy: sync

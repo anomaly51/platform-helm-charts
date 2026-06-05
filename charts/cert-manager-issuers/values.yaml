@@ -1,0 +1,21 @@
+issuer:
+  name: letsencrypt-production
+  server: https://acme-v02.api.letsencrypt.org/directory
+  email: catprogrammer.vlad@gmail.com
+  privateKeySecretName: letsencrypt-production-account-key
+  cloudflareSecretName: cloudflare-api-token
+  cloudflareSecretKey: api-token
+
+externalSecret:
+  name: cloudflare-api-token
+  namespace: cert-manager
+  refreshInterval: 5m
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: cloudflare-api-token
+    creationPolicy: Owner
+  remoteRef:
+    key: shared/cloudflare-dns
+    property: api-token

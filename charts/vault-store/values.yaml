@@ -1,0 +1,9 @@
+vault:
+  server: https://vault.api-api-api.com
+  path: secret
+  version: v2
+  auth:
+    tokenSecretRef:
+      name: vault-token
+      key: token
+      namespace: external-secrets
