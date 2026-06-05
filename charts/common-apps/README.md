@@ -12,15 +12,15 @@ The chart supports two deployment styles:
 Use SemVer tags for chart releases:
 
 ```bash
-git tag common-apps-v0.3.0
-git push origin common-apps-v0.3.0
+git tag common-apps-v0.4.2
+git push origin common-apps-v0.4.2
 ```
 
 The release workflow publishes:
 
 ```bash
 helm package charts/common-apps
-helm push common-apps-0.3.0.tgz oci://harbor.api-api-api.com/helm-charts
+helm push common-apps-0.4.2.tgz oci://harbor.api-api-api.com/helm-charts
 ```
 
 Consumer app charts should pin the chart version:
@@ -29,7 +29,7 @@ Consumer app charts should pin the chart version:
 dependencies:
 - name: common-apps
   alias: common-app
-  version: 0.3.0
+  version: 0.4.2
   repository: oci://harbor.api-api-api.com/helm-charts
 ```
 

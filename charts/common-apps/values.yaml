@@ -5,7 +5,7 @@ cluster:
   certManager:
     issuer: letsencrypt-production
   externalDns:
-    target: a6aaa50f-2590-4179-84f2-d0f18bce0587.cfargotunnel.com
+    target: ""
 
 namespace:
   create: true
