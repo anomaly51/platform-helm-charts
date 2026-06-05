@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "common-apps.fullname" . }}
-  namespace: {{ include "common-apps.namespace" . }}
+  name: {{ include "app.fullname" . }}
+  namespace: {{ include "app.namespace" . }}
   labels:
-    {{- include "common-apps.labels" . | nindent 4 }}
+    {{- include "app.labels" . | nindent 4 }}
   {{- with .Values.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -13,7 +13,7 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   selector:
-    {{- include "common-apps.selectorLabels" . | nindent 4 }}
+    {{- include "app.selectorLabels" . | nindent 4 }}
   ports:
     - name: http
       port: {{ .Values.service.port }}

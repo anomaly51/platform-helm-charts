@@ -1,8 +1,8 @@
-{{- define "common-apps.name" -}}
+{{- define "app.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{- define "common-apps.fullname" -}}
+{{- define "app.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -10,22 +10,25 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "common-apps.namespace" -}}
+{{- define "app.namespace" -}}
 {{- default .Release.Namespace .Values.namespace.name -}}
 {{- end -}}
 
-{{- define "common-apps.labels" -}}
-app.kubernetes.io/name: {{ include "common-apps.name" . }}
+{{- define "app.labels" -}}
+app.kubernetes.io/name: {{ include "app.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+{{- with .Values.labels }}
+{{- toYaml . | nindent 0 }}
+{{- end }}
 {{- end -}}
 
-{{- define "common-apps.selectorLabels" -}}
+{{- define "app.selectorLabels" -}}
 {{- if .Values.selectorLabels -}}
 {{- toYaml .Values.selectorLabels -}}
 {{- else -}}
-app.kubernetes.io/name: {{ include "common-apps.name" . }}
+app.kubernetes.io/name: {{ include "app.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 {{- end -}}

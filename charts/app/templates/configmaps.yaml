@@ -4,9 +4,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .name }}
-  namespace: {{ default (include "common-apps.namespace" $) .namespace }}
+  namespace: {{ default (include "app.namespace" $) .namespace }}
   labels:
-    {{- include "common-apps.labels" $ | nindent 4 }}
+    {{- include "app.labels" $ | nindent 4 }}
   {{- with .annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

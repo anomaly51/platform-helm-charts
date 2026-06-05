@@ -8,7 +8,7 @@ own names and release contracts under `charts/`.
 
 ## Charts
 
-- `common-apps`: reusable application chart for small GitOps-managed workloads.
+- `app`: reusable application chart for small GitOps-managed workloads.
 - `cloudflared`: Cloudflare Tunnel deployment and ArgoCD ingress wiring.
 - `vault-store`: External Secrets `ClusterSecretStore` for the centralized
   utility-cluster Vault.
@@ -29,7 +29,7 @@ own names and release contracts under `charts/`.
 
 ## Tag Contract
 
-- `common-apps-vX.Y.Z` publishes chart `common-apps` version `X.Y.Z`.
+- `app-vX.Y.Z` publishes chart `app` version `X.Y.Z`.
 - `<chart-name>-vX.Y.Z` publishes chart `<chart-name>` version `X.Y.Z`.
 - Docker images should use immutable tags for deployed revisions.
 

@@ -13,10 +13,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "common-apps.fullname" . }}
-  namespace: {{ include "common-apps.namespace" . }}
+  name: {{ include "app.fullname" . }}
+  namespace: {{ include "app.namespace" . }}
   labels:
-    {{- include "common-apps.labels" . | nindent 4 }}
+    {{- include "app.labels" . | nindent 4 }}
   {{- with $annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -26,16 +26,19 @@ spec:
   tls:
     - hosts:
         - {{ .Values.ingress.host }}
-      secretName: {{ default (default (printf "%s-tls" (include "common-apps.fullname" .)) .Values.ingress.tlsSecretName) .Values.ingress.tls.secretName }}
+      secretName: {{ default (default (printf "%s-tls" (include "app.fullname" .)) .Values.ingress.tlsSecretName) .Values.ingress.tls.secretName }}
   rules:
     - host: {{ .Values.ingress.host }}
       http:
         paths:
-          - path: {{ .Values.ingress.path }}
-            pathType: {{ .Values.ingress.pathType }}
+          {{- $paths := .Values.ingress.paths | default (list (dict "path" .Values.ingress.path "pathType" .Values.ingress.pathType)) }}
+          {{- range $paths }}
+          - path: {{ .path }}
+            pathType: {{ default $.Values.ingress.pathType .pathType }}
             backend:
               service:
-                name: {{ include "common-apps.fullname" . }}
+                name: {{ include "app.fullname" $ }}
                 port:
-                  number: {{ .Values.service.port }}
+                  number: {{ $.Values.service.port }}
+          {{- end }}
 {{- end }}

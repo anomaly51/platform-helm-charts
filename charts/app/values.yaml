@@ -1,5 +1,6 @@
 nameOverride: ""
 fullnameOverride: ""
+labels: {}
 
 cluster:
   certManager:
@@ -33,6 +34,7 @@ registryPullSecret:
   name: harbor-pull-secret
   registry: harbor.api-api-api.com
   refreshInterval: 1h
+  deletionPolicy: ""
   secretStoreRef:
     name: vault-backend
     kind: ClusterSecretStore
@@ -43,9 +45,15 @@ registryPullSecret:
 
 podAnnotations: {}
 podLabels: {}
+terminationGracePeriodSeconds: null
+
+deployment:
+  strategy: {}
 
 command: []
 args: []
+containerName: ""
+lifecycle: {}
 
 env: {}
 envList: []
@@ -68,6 +76,7 @@ ingress:
   host: ""
   path: /
   pathType: Prefix
+  paths: []
   tlsSecretName: ""
   tls:
     secretName: ""
@@ -85,6 +94,7 @@ persistence:
   storageClassName: nfs-client
   accessModes:
     - ReadWriteOnce
+  annotations: {}
 
 configMaps: []
 externalSecrets: []

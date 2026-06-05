@@ -2,19 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "common-apps.fullname" . }}
-  namespace: {{ include "common-apps.namespace" . }}
+  name: {{ include "app.fullname" . }}
+  namespace: {{ include "app.namespace" . }}
   labels:
-    {{- include "common-apps.labels" . | nindent 4 }}
+    {{- include "app.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  {{- with .Values.deployment.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
-      {{- include "common-apps.selectorLabels" . | nindent 6 }}
+      {{- include "app.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "common-apps.selectorLabels" . | nindent 8 }}
+        {{- include "app.selectorLabels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -23,6 +27,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
+      {{- with .Values.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ . }}
+      {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -32,9 +39,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: {{ include "common-apps.name" . }}
+        - name: {{ default (include "app.name" .) .Values.containerName }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.lifecycle }}
+          lifecycle:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.command }}
           command:
             {{- toYaml . | nindent 12 }}
@@ -91,7 +102,7 @@ spec:
         {{- if .Values.persistence.enabled }}
         - name: {{ .Values.persistence.name }}
           persistentVolumeClaim:
-            claimName: {{ default (printf "%s-data" (include "common-apps.fullname" .)) .Values.persistence.claimName }}
+            claimName: {{ default (printf "%s-data" (include "app.fullname" .)) .Values.persistence.claimName }}
         {{- end }}
         {{- with .Values.extraVolumes }}
         {{- toYaml . | nindent 8 }}
