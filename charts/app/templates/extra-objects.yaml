@@ -8,6 +8,16 @@
 {{- range $objects }}
 ---
 {{- $renderObject := deepCopy . }}
+{{- if eq (get $renderObject "kind") "Deployment" }}
+{{- $spec := get $renderObject "spec" | default dict }}
+{{- $_ := set $spec "strategy" (dict "type" "RollingUpdate" "rollingUpdate" (dict "maxSurge" 1 "maxUnavailable" 0)) }}
+{{- $template := get $spec "template" | default dict }}
+{{- $podSpec := get $template "spec" | default dict }}
+{{- $_ := set $podSpec "imagePullSecrets" (list (dict "name" "harbor-pull-secret")) }}
+{{- $_ := set $template "spec" $podSpec }}
+{{- $_ := set $spec "template" $template }}
+{{- $_ := set $renderObject "spec" $spec }}
+{{- end }}
 {{- if eq (get $renderObject "kind") "Ingress" }}
 {{- $metadata := get $renderObject "metadata" | default dict }}
 {{- $annotations := get $metadata "annotations" | default dict }}

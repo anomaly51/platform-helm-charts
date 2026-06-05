@@ -9,8 +9,10 @@ The chart supports two deployment styles:
 
 Use native fields for typical single-workload applications:
 
-- `deployment.strategy`, `containerName`, `lifecycle`, `terminationGracePeriodSeconds`;
-- `registryPullSecret`, `externalSecrets`, `env`, `envList`, `envFrom`;
+- `name` for the application label name;
+- `resourceName` for generated Kubernetes resource names;
+- `containerName`, `lifecycle`, `terminationGracePeriodSeconds`;
+- `externalSecrets`, `env`, `envList`, `envFrom`;
 - `persistence`, `extraVolumes`, `extraVolumeMounts`, `initContainers`;
 - `ingress.host`, `ingress.path`, or `ingress.paths` for multiple paths on one host.
 
@@ -19,15 +21,15 @@ Use native fields for typical single-workload applications:
 Use SemVer tags for chart releases:
 
 ```bash
-git tag app-v0.4.3
-git push origin app-v0.4.3
+git tag app-v0.4.4
+git push origin app-v0.4.4
 ```
 
 The release workflow publishes:
 
 ```bash
 helm package charts/app
-helm push app-0.4.3.tgz oci://harbor.api-api-api.com/helm-charts
+helm push app-0.4.4.tgz oci://harbor.api-api-api.com/helm-charts
 ```
 
 Consumer app charts should pin the chart version:
@@ -36,7 +38,7 @@ Consumer app charts should pin the chart version:
 dependencies:
 - name: app
   alias: app
-  version: 0.4.3
+  version: 0.4.4
   repository: oci://harbor.api-api-api.com/helm-charts
 ```
 

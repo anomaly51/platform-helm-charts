@@ -1,5 +1,5 @@
-nameOverride: ""
-fullnameOverride: ""
+name: ""
+resourceName: ""
 labels: {}
 
 cluster:
@@ -26,29 +26,9 @@ image:
 # Named images used by object placeholders, for example __IMAGE_api__.
 images: {}
 
-imagePullSecrets:
-  - name: harbor-pull-secret
-
-registryPullSecret:
-  enabled: false
-  name: harbor-pull-secret
-  registry: harbor.api-api-api.com
-  refreshInterval: 1h
-  deletionPolicy: ""
-  secretStoreRef:
-    name: vault-backend
-    kind: ClusterSecretStore
-  remoteRef:
-    key: shared/harbor
-    usernameProperty: username
-    passwordProperty: password
-
 podAnnotations: {}
 podLabels: {}
 terminationGracePeriodSeconds: null
-
-deployment:
-  strategy: {}
 
 command: []
 args: []

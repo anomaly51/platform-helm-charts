@@ -1,10 +1,11 @@
 {{- define "app.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- default .Chart.Name (default .Values.nameOverride .Values.name) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{- define "app.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- $resourceName := default .Values.fullnameOverride .Values.resourceName -}}
+{{- if $resourceName -}}
+{{- $resourceName | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- .Release.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}

@@ -8,10 +8,11 @@ metadata:
     {{- include "app.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
-  {{- with .Values.deployment.strategy }}
   strategy:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       {{- include "app.selectorLabels" . | nindent 6 }}
@@ -30,10 +31,8 @@ spec:
       {{- with .Values.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ . }}
       {{- end }}
-      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        - name: harbor-pull-secret
       {{- with .Values.initContainers }}
       initContainers:
         {{- toYaml . | nindent 8 }}
