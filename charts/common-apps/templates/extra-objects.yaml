@@ -1,0 +1,15 @@
+{{- $objects := list }}
+{{- with .Values.objects }}
+{{- $objects = concat $objects . }}
+{{- end }}
+{{- with .Values.extraObjects }}
+{{- $objects = concat $objects . }}
+{{- end }}
+{{- range $objects }}
+---
+{{- $object := toYaml . }}
+{{- range $name, $image := $.Values.images }}
+{{- $object = replace (printf "__IMAGE_%s__" $name) (printf "%s:%s" $image.repository $image.tag) $object }}
+{{- end }}
+{{ $object }}
+{{- end }}

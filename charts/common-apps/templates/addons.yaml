@@ -1,0 +1,172 @@
+{{- with .Values.addons.minio }}
+{{- if .enabled }}
+{{- $selectorLabels := .selectorLabels }}
+{{- if not $selectorLabels }}
+{{- $selectorLabels = dict "app.kubernetes.io/name" .name "app.kubernetes.io/instance" $.Release.Name }}
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+  namespace: {{ include "common-apps.namespace" $ }}
+  labels:
+    {{- toYaml $selectorLabels | nindent 4 }}
+spec:
+  type: {{ .service.type }}
+  selector:
+    {{- toYaml $selectorLabels | nindent 4 }}
+  ports:
+    - name: api
+      port: {{ .service.ports.api }}
+      targetPort: {{ .service.ports.api }}
+    - name: console
+      port: {{ .service.ports.console }}
+      targetPort: {{ .service.ports.console }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .name }}
+  namespace: {{ include "common-apps.namespace" $ }}
+  labels:
+    {{- toYaml $selectorLabels | nindent 4 }}
+spec:
+  replicas: 1
+  serviceName: {{ .name }}
+  selector:
+    matchLabels:
+      {{- toYaml $selectorLabels | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- toYaml $selectorLabels | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .name }}
+          image: "{{ .image.repository }}:{{ .image.tag }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+          args:
+            - server
+            - {{ .persistence.mountPath | quote }}
+            - --console-address
+            - ":{{ .service.ports.console }}"
+          env:
+            - name: MINIO_ROOT_USER
+              value: {{ .auth.rootUser | quote }}
+            - name: MINIO_ROOT_PASSWORD
+              value: {{ .auth.rootPassword | quote }}
+          ports:
+            - name: api
+              containerPort: {{ .service.ports.api }}
+            - name: console
+              containerPort: {{ .service.ports.console }}
+          {{- if .persistence.enabled }}
+          volumeMounts:
+            - name: {{ .persistence.name }}
+              mountPath: {{ .persistence.mountPath }}
+          {{- end }}
+  {{- if .persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ .persistence.name }}
+        {{- with .persistence.annotations }}
+        annotations:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      spec:
+        accessModes:
+          {{- toYaml .persistence.accessModes | nindent 10 }}
+        resources:
+          requests:
+            storage: {{ .persistence.size }}
+        {{- with .persistence.storageClassName }}
+        storageClassName: {{ . }}
+        {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{- with .Values.addons.postgres }}
+{{- if .enabled }}
+{{- $selectorLabels := .selectorLabels }}
+{{- if not $selectorLabels }}
+{{- $selectorLabels = dict "app.kubernetes.io/name" .name "app.kubernetes.io/instance" $.Release.Name }}
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+  namespace: {{ include "common-apps.namespace" $ }}
+  labels:
+    {{- toYaml $selectorLabels | nindent 4 }}
+spec:
+  type: {{ .service.type }}
+  selector:
+    {{- toYaml $selectorLabels | nindent 4 }}
+  ports:
+    - name: postgres
+      port: {{ .service.port }}
+      targetPort: {{ .service.port }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .name }}
+  namespace: {{ include "common-apps.namespace" $ }}
+  labels:
+    {{- toYaml $selectorLabels | nindent 4 }}
+spec:
+  replicas: 1
+  serviceName: {{ .name }}
+  selector:
+    matchLabels:
+      {{- toYaml $selectorLabels | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- toYaml $selectorLabels | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .name }}
+          image: "{{ .image.repository }}:{{ .image.tag }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+          env:
+            - name: POSTGRES_DB
+              value: {{ .database | quote }}
+            - name: POSTGRES_USER
+              value: {{ .user | quote }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .passwordSecret.name }}
+                  key: {{ .passwordSecret.key }}
+          ports:
+            - name: postgres
+              containerPort: {{ .service.port }}
+          {{- if .persistence.enabled }}
+          volumeMounts:
+            - name: {{ .persistence.name }}
+              mountPath: {{ .persistence.mountPath }}
+          {{- end }}
+  {{- if .persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ .persistence.name }}
+        {{- with .persistence.annotations }}
+        annotations:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      spec:
+        accessModes:
+          {{- toYaml .persistence.accessModes | nindent 10 }}
+        resources:
+          requests:
+            storage: {{ .persistence.size }}
+        {{- with .persistence.storageClassName }}
+        storageClassName: {{ . }}
+        {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}

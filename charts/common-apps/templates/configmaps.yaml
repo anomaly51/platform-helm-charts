@@ -1,0 +1,16 @@
+{{- range .Values.configMaps }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .name }}
+  namespace: {{ default (include "common-apps.namespace" $) .namespace }}
+  labels:
+    {{- include "common-apps.labels" $ | nindent 4 }}
+  {{- with .annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  {{- toYaml .data | nindent 2 }}
+{{- end }}

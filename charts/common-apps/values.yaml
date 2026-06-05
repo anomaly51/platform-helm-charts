@@ -1,0 +1,152 @@
+nameOverride: ""
+fullnameOverride: ""
+
+cluster:
+  certManager:
+    issuer: letsencrypt-production
+  externalDns:
+    target: a6aaa50f-2590-4179-84f2-d0f18bce0587.cfargotunnel.com
+
+namespace:
+  create: true
+  name: ""
+  labels: {}
+  annotations: {}
+
+replicaCount: 1
+
+selectorLabels: {}
+
+image:
+  repository: ""
+  tag: ""
+  pullPolicy: IfNotPresent
+
+# Named images used by object placeholders, for example __IMAGE_api__.
+images: {}
+
+imagePullSecrets:
+  - name: harbor-pull-secret
+
+registryPullSecret:
+  enabled: false
+  name: harbor-pull-secret
+  registry: harbor.api-api-api.com
+  refreshInterval: 1h
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  remoteRef:
+    key: shared/harbor
+    usernameProperty: username
+    passwordProperty: password
+
+podAnnotations: {}
+podLabels: {}
+
+command: []
+args: []
+
+env: {}
+envList: []
+envFrom: []
+
+ports:
+  - name: http
+    containerPort: 80
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 80
+  targetPort: http
+  annotations: {}
+
+ingress:
+  enabled: false
+  className: traefik
+  host: ""
+  path: /
+  pathType: Prefix
+  tlsSecretName: ""
+  tls:
+    secretName: ""
+  annotations: {}
+
+resources: {}
+readinessProbe: {}
+livenessProbe: {}
+
+persistence:
+  enabled: false
+  name: data
+  mountPath: /data
+  size: 1Gi
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteOnce
+
+configMaps: []
+externalSecrets: []
+extraVolumes: []
+extraVolumeMounts: []
+extraContainers: []
+initContainers: []
+
+addons:
+  minio:
+    enabled: false
+    name: minio
+    image:
+      repository: minio/minio
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      ports:
+        api: 9000
+        console: 9001
+    selectorLabels: {}
+    auth:
+      rootUser: minioadmin
+      rootPassword: minioadmin
+    persistence:
+      enabled: true
+      name: data
+      mountPath: /data
+      size: 10Gi
+      storageClassName: nfs-client
+      accessModes:
+        - ReadWriteOnce
+      annotations:
+        argocd.argoproj.io/sync-options: Delete=false,Prune=false
+        helm.sh/resource-policy: keep
+  postgres:
+    enabled: false
+    name: postgres
+    image:
+      repository: postgres
+      tag: 15-alpine
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 5432
+    selectorLabels: {}
+    database: app_db
+    user: postgres
+    passwordSecret:
+      name: postgres-secret
+      key: password
+    persistence:
+      enabled: true
+      name: data
+      mountPath: /var/lib/postgresql/data
+      size: 5Gi
+      storageClassName: nfs-client
+      accessModes:
+        - ReadWriteOnce
+      annotations:
+        argocd.argoproj.io/sync-options: Delete=false,Prune=false
+        helm.sh/resource-policy: keep
+
+objects: []
