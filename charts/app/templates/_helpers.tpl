@@ -33,3 +33,11 @@ app.kubernetes.io/name: {{ include "app.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 {{- end -}}
+
+{{- define "app.imagePullSecrets" -}}
+{{- $secrets := .Values.imagePullSecrets | default (list) -}}
+{{- if and (empty $secrets) .Values.registryPullSecret.enabled -}}
+{{- $secrets = list (dict "name" .Values.registryPullSecret.name) -}}
+{{- end -}}
+{{- toYaml $secrets -}}
+{{- end -}}

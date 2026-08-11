@@ -1,4 +1,5 @@
 {{- if .Values.image.repository }}
+{{- $imagePullSecrets := include "app.imagePullSecrets" . | fromYamlArray }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -8,11 +9,6 @@ metadata:
     {{- include "app.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
   selector:
     matchLabels:
       {{- include "app.selectorLabels" . | nindent 6 }}
@@ -31,8 +27,10 @@ spec:
       {{- with .Values.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ . }}
       {{- end }}
+      {{- with $imagePullSecrets }}
       imagePullSecrets:
-        - name: harbor-pull-secret
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.initContainers }}
       initContainers:
         {{- toYaml . | nindent 8 }}

@@ -7,39 +7,7 @@
 {{- end }}
 {{- range $objects }}
 ---
-{{- $renderObject := deepCopy . }}
-{{- if eq (get $renderObject "kind") "Deployment" }}
-{{- $spec := get $renderObject "spec" | default dict }}
-{{- $_ := set $spec "strategy" (dict "type" "RollingUpdate" "rollingUpdate" (dict "maxSurge" 1 "maxUnavailable" 0)) }}
-{{- $template := get $spec "template" | default dict }}
-{{- $podSpec := get $template "spec" | default dict }}
-{{- $_ := set $podSpec "imagePullSecrets" (list (dict "name" "harbor-pull-secret")) }}
-{{- $_ := set $template "spec" $podSpec }}
-{{- $_ := set $spec "template" $template }}
-{{- $_ := set $renderObject "spec" $spec }}
-{{- end }}
-{{- if eq (get $renderObject "kind") "Ingress" }}
-{{- $metadata := get $renderObject "metadata" | default dict }}
-{{- $annotations := get $metadata "annotations" | default dict }}
-{{- $spec := get $renderObject "spec" | default dict }}
-{{- $hosts := list }}
-{{- range (get $spec "rules" | default list) }}
-{{- with .host }}
-{{- $hosts = append $hosts . }}
-{{- end }}
-{{- end }}
-{{- if and $hosts (not (hasKey $annotations "external-dns.alpha.kubernetes.io/hostname")) }}
-{{- $_ := set $annotations "external-dns.alpha.kubernetes.io/hostname" ($hosts | uniq | join ",") }}
-{{- end }}
-{{- with $.Values.cluster.externalDns.target }}
-{{- if not (hasKey $annotations "external-dns.alpha.kubernetes.io/target") }}
-{{- $_ := set $annotations "external-dns.alpha.kubernetes.io/target" . }}
-{{- end }}
-{{- end }}
-{{- $_ := set $metadata "annotations" $annotations }}
-{{- $_ := set $renderObject "metadata" $metadata }}
-{{- end }}
-{{- $object := toYaml $renderObject }}
+{{- $object := toYaml . }}
 {{- range $name, $image := $.Values.images }}
 {{- $object = replace (printf "__IMAGE_%s__" $name) (printf "%s:%s" $image.repository $image.tag) $object }}
 {{- end }}

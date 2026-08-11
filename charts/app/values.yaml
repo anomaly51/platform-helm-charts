@@ -1,5 +1,9 @@
 name: ""
+# nameOverride is retained for wrappers built with app <= 0.4.3.
+nameOverride: ""
 resourceName: ""
+# fullnameOverride is retained for wrappers built with app <= 0.4.3.
+fullnameOverride: ""
 labels: {}
 
 cluster:
@@ -9,7 +13,8 @@ cluster:
     target: ""
 
 namespace:
-  create: true
+  # Argo CD creates the destination namespace. Enable only when the chart must own it.
+  create: false
   name: ""
   labels: {}
   annotations: {}
@@ -25,6 +30,23 @@ image:
 
 # Named images used by object placeholders, for example __IMAGE_api__.
 images: {}
+
+imagePullSecrets: []
+
+# Enable only for images hosted in the private Harbor registry.
+registryPullSecret:
+  enabled: false
+  name: harbor-pull-secret
+  registry: harbor.api-api-api.com
+  refreshInterval: 1h
+  deletionPolicy: ""
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  remoteRef:
+    key: shared/harbor
+    usernameProperty: username
+    passwordProperty: password
 
 podAnnotations: {}
 podLabels: {}
@@ -61,6 +83,16 @@ ingress:
   tls:
     secretName: ""
   annotations: {}
+
+httpRoute:
+  enabled: false
+  host: ""
+  path: /
+  pathType: PathPrefix
+  gateway:
+    name: public
+    namespace: networking
+    sectionName: https
 
 resources: {}
 readinessProbe: {}
