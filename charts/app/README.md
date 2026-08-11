@@ -30,15 +30,15 @@ Use native fields for typical single-workload applications:
 Use SemVer tags for chart releases:
 
 ```bash
-git tag app-v0.5.0
-git push origin app-v0.5.0
+git tag app-v0.5.1
+git push origin app-v0.5.1
 ```
 
 The release workflow publishes:
 
 ```bash
 helm package charts/app
-helm push app-0.5.0.tgz oci://harbor.api-api-api.com/helm-charts
+helm push app-0.5.1.tgz oci://harbor.internal.api-api-api.com/helm-charts
 ```
 
 Consumer app charts should pin the chart version:
@@ -47,8 +47,8 @@ Consumer app charts should pin the chart version:
 dependencies:
 - name: app
   alias: app
-  version: 0.5.0
-  repository: oci://harbor.api-api-api.com/helm-charts
+  version: 0.5.1
+  repository: oci://harbor.internal.api-api-api.com/helm-charts
 ```
 
 ## Image Updates
@@ -59,7 +59,7 @@ CI should update app `values.yaml`, not live cluster state. For structured objec
 app:
   images:
     api:
-      repository: harbor.api-api-api.com/example/api
+      repository: harbor.internal.api-api-api.com/example/api
       tag: sha-0123456789ab
 ```
 

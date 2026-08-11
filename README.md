@@ -23,7 +23,7 @@ own names and release contracts under `charts/`.
 
 - Chart versions are SemVer and immutable once pushed.
 - Chart artifacts can be packaged manually and stored as OCI artifacts in
-  `harbor.api-api-api.com/helm-charts`.
+  `harbor.internal.api-api-api.com/helm-charts`.
 - Application repositories pin chart versions in `Chart.yaml`.
 - Application image tags are updated in GitOps repositories by CI.
 

@@ -37,7 +37,7 @@ imagePullSecrets: []
 registryPullSecret:
   enabled: false
   name: harbor-pull-secret
-  registry: harbor.api-api-api.com
+  registry: harbor.internal.api-api-api.com
   refreshInterval: 1h
   deletionPolicy: ""
   secretStoreRef:

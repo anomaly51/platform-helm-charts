@@ -47,7 +47,7 @@ Reusable implementation now lives in `platform-helm-charts/charts/*`.
 Cluster GitOps repositories consume the platform charts from:
 
 ```text
-oci://harbor.api-api-api.com/helm-charts
+oci://harbor.internal.api-api-api.com/helm-charts
 ```
 
 Each consumer chart pins version `0.1.0` and uses an alias such as
