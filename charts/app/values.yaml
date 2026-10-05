@@ -5,6 +5,8 @@ resourceName: ""
 # fullnameOverride is retained for wrappers built with app <= 0.4.3.
 fullnameOverride: ""
 labels: {}
+# Disable generated metadata labels when adopting resources with existing labels.
+includeStandardLabels: true
 
 cluster:
   certManager:
@@ -20,6 +22,12 @@ namespace:
   annotations: {}
 
 replicaCount: 1
+deploymentAnnotations: {}
+strategy: {}
+revisionHistoryLimit: null
+progressDeadlineSeconds: null
+# Preview workloads roll with no surge and are created in Argo CD sync wave 3.
+ephemeral: false
 
 selectorLabels: {}
 
@@ -51,6 +59,14 @@ registryPullSecret:
 podAnnotations: {}
 podLabels: {}
 terminationGracePeriodSeconds: null
+nodeSelector: {}
+affinity: {}
+tolerations: []
+podSecurityContext: {}
+securityContext: {}
+serviceAccountName: ""
+# null leaves Kubernetes' default unchanged; false is rendered explicitly.
+automountServiceAccountToken: null
 
 command: []
 args: []
@@ -70,6 +86,8 @@ service:
   type: ClusterIP
   port: 80
   targetPort: http
+  # Omit protocol to retain the existing Service manifest shape.
+  protocol: ""
   annotations: {}
 
 ingress:
@@ -97,6 +115,10 @@ httpRoute:
 resources: {}
 readinessProbe: {}
 livenessProbe: {}
+startupProbe: {}
+
+# Independent Deployments/Services keyed by workload name. See README for inheritance.
+additionalWorkloads: {}
 
 persistence:
   enabled: false
@@ -110,6 +132,8 @@ persistence:
 
 configMaps: []
 externalSecrets: []
+# Optional Vault Secrets Operator resources: [{name: ..., spec: {...}}].
+vaultStaticSecrets: []
 extraVolumes: []
 extraVolumeMounts: []
 extraContainers: []

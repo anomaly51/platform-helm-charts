@@ -16,10 +16,12 @@
 {{- end -}}
 
 {{- define "app.labels" -}}
+{{- if or (not (hasKey .Values "includeStandardLabels")) .Values.includeStandardLabels -}}
 app.kubernetes.io/name: {{ include "app.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+{{- end }}
 {{- with .Values.labels }}
 {{- toYaml . | nindent 0 }}
 {{- end }}
